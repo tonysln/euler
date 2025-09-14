@@ -37,6 +37,22 @@ def collatz_count(n, d, limit=1e10):
     return d[nn]
 
 
+def primes_up_to(n):
+    A = [False] + [True]*n
+    
+    for i in range(2, math.ceil(math.sqrt(n))):
+        if A[i]:
+            isq = i*i
+            j = isq
+            f = 1
+            while j <= n:
+                A[j] = False
+                j = isq + f*i
+                f += 1
+                
+    return list(filter(lambda i: A[i], range(2, len(A))))
+
+
 @timed
 def problem_1(N=1e4):
     """
@@ -106,11 +122,40 @@ def problem_28(side):
     return s
 
 
+def rotations(n, primes):
+    c = set()
+    for i in range(int(len(str(n)))+1):
+        c.add(n)
+
+        n = int(str(n)[-1] + str(n)[0:-1])
+        if n not in primes: 
+            return set()
+            
+    return c
+
+
+@timed
+def problem_35(N=100):
+    """
+    Circular Primes
+    Problem 35
+    """
+    P = primes_up_to(int(N))
+    cprimes = []
+    for p in P:
+        c = rotations(p, P)
+        if c:
+            cprimes.append(c)
+
+    return len(cprimes), cprimes
+
+
 if __name__ == '__main__':
-    print('* Problem 1:\n', problem_1(1e4))
-    print('* Problem 4:\n', problem_4(3))
-    print('* Problem 14:\n', problem_14(1e5))
-    print('* Problem 28:\n', problem_28(1001))
+    # print('* Problem 1:\n', problem_1(1e4))
+    # print('* Problem 4:\n', problem_4(3))
+    # print('* Problem 14:\n', problem_14(1e5))
+    # print('* Problem 28:\n', problem_28(1001))
+    print('* Problem 35:\n', problem_35(1e5))
 
 
 
