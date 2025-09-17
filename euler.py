@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from functools import wraps
+from functools import wraps, lru_cache
 import time
 import math
 
@@ -67,6 +67,28 @@ def problem_1(N=1e4):
     return s
 
 
+@lru_cache
+def fibonacci(n):
+    return fibonacci(n-1) + fibonacci(n-2) if n > 2 else n
+
+
+@timed
+def problem_2(N=1e6):
+    """
+    Even Fibonacci Numbers
+    Problem 2
+    """
+    s = 0
+    i = 2
+    while True:
+        n = fibonacci(i)
+        if n > N:
+            break
+        s += n
+        i += 3
+    return s
+
+
 @timed
 def problem_4(d=3):
     """
@@ -103,6 +125,23 @@ def problem_14(N=1e6):
             mn = n
 
     return mn,m
+
+
+@timed
+def problem_25(N=1e3):
+    """
+    1000-digit Fibonacci Number
+    Problem 25
+    """
+    i = 1
+    while True:
+        n = fibonacci(i)
+        if math.floor(math.log10(n))+1 == int(N):
+            return i+1
+
+        i += 1
+
+    return -1
 
 
 @timed
@@ -151,11 +190,13 @@ def problem_35(N=100):
 
 
 if __name__ == '__main__':
-    # print('* Problem 1:\n', problem_1(1e4))
-    # print('* Problem 4:\n', problem_4(3))
-    # print('* Problem 14:\n', problem_14(1e5))
-    # print('* Problem 28:\n', problem_28(1001))
-    print('* Problem 35:\n', problem_35(1e5))
+    print('* Problem 1:\n', problem_1(1e4))
+    print('* Problem 2:\n', problem_2(4e6))
+    print('* Problem 4:\n', problem_4(3))
+    print('* Problem 14:\n', problem_14(1e5))
+    print('* Problem 25:\n', problem_25(1e3))
+    print('* Problem 28:\n', problem_28(1001))
+    # print('* Problem 35:\n', problem_35(1e5))
 
 
 
