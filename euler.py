@@ -90,6 +90,26 @@ def problem_2(N=1e6):
 
 
 @timed
+def problem_3(n):
+    """
+    Largest Prime Factor
+    Problem 3
+    """
+    P = primes_up_to(int(math.sqrt(n)))
+    f = []
+
+    for p in P:
+        while n % p == 0:
+            f.append(int(p))
+            n /= p
+
+    if n > 1:
+        f.append(int(n))
+
+    return max(f)
+
+
+@timed
 def problem_4(d=3):
     """
     Largest Palindrome Product
@@ -107,6 +127,30 @@ def problem_4(d=3):
                     pmax = (p, a, b)
 
     return pmax
+
+
+@timed
+def problem_6(N=1e3):
+    """
+    Sum Square Difference
+    Problem 6
+    """
+    s1 = 0
+    s2 = 0
+    for i in range(1, int(N)+1):
+        s1 += i*i
+        s2 += i
+
+    return s2*s2 - s1
+
+
+@timed
+def problem_10(N=1e6):
+    """
+    Summation of Primes
+    Problem 10
+    """
+    return sum(primes_up_to(int(N)))
 
 
 @timed
@@ -192,7 +236,11 @@ def problem_35(N=100):
 if __name__ == '__main__':
     print('* Problem 1:\n', problem_1(1e4))
     print('* Problem 2:\n', problem_2(4e6))
+    # print('* Problem 3:\n', problem_3(13195))
+    print('* Problem 3:\n', problem_3(600851475143))
     print('* Problem 4:\n', problem_4(3))
+    print('* Problem 6:\n', problem_6(100))
+    print('* Problem 10:\n', problem_10(2e6))
     print('* Problem 14:\n', problem_14(1e5))
     print('* Problem 25:\n', problem_25(1e3))
     print('* Problem 28:\n', problem_28(1001))
