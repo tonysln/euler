@@ -233,18 +233,61 @@ def problem_35(N=100):
     return len(cprimes), cprimes
 
 
+def bouncy(n):
+    c = [True, True]
+    
+    p = n % 10
+    n = n // 10
+    while n:
+        d = n % 10
+
+        if d > p: # inc
+            c[0] = False
+            if not c[1]: return True
+        
+        if d < p: # dec
+            c[1] = False
+            if not c[0]: return True
+
+        p = d
+        n = n // 10
+
+    return not sum(c)
+
+
+@timed
+def problem_112(p=0.5):
+    """
+    Bouncy Numbers
+    Problem 112
+    """
+    b = 0
+    n = 1
+    while True:
+        if bouncy(n):
+            b += 1
+
+        if b / n >= p:
+            return n
+
+        n += 1
+
+    return -1
+
+
 if __name__ == '__main__':
-    print('* Problem 1:\n', problem_1(1e4))
-    print('* Problem 2:\n', problem_2(4e6))
+    # print('* Problem 1:\n', problem_1(1e4))
+    # print('* Problem 2:\n', problem_2(4e6))
     # print('* Problem 3:\n', problem_3(13195))
-    print('* Problem 3:\n', problem_3(600851475143))
-    print('* Problem 4:\n', problem_4(3))
-    print('* Problem 6:\n', problem_6(100))
-    print('* Problem 10:\n', problem_10(2e6))
-    print('* Problem 14:\n', problem_14(1e5))
-    print('* Problem 25:\n', problem_25(1e3))
-    print('* Problem 28:\n', problem_28(1001))
+    # print('* Problem 3:\n', problem_3(600851475143))
+    # print('* Problem 4:\n', problem_4(3))
+    # print('* Problem 6:\n', problem_6(100))
+    # print('* Problem 10:\n', problem_10(2e6))
+    # print('* Problem 14:\n', problem_14(1e5))
+    # print('* Problem 25:\n', problem_25(1e3))
+    # print('* Problem 28:\n', problem_28(1001))
     # print('* Problem 35:\n', problem_35(1e5))
+    # print('* Problem 112:\n', problem_112(0.5))
+    print('* Problem 112:\n', problem_112(0.99))
 
-
-
+ 
