@@ -96,8 +96,43 @@ def day2_p2(fpath):
     return sum
 
 
+def day3_p1(fpath):
+    """
+    https://adventofcode.com/2025/day/3
+    """
+    with open(fpath, "r") as f:
+        lines = f.read().strip().splitlines()
+
+    total = 0
+
+    for bank in lines:
+        ibank = [(int(e), i) for i, e in enumerate(bank)]
+        sbank = sorted(ibank, key=lambda x: x[0], reverse=True)
+
+        best = 0
+        # not nice but good enough
+        for i in range(0, len(bank)):
+            for j in range(0, len(bank)):
+                if i == j:
+                    continue
+
+                a = sbank[i]
+                b = sbank[j]
+                if a[1] < b[1]:
+                    continue
+
+                c = int(f"{b[0]}{a[0]}")
+                if c > best:
+                    best = c
+
+        total += best
+
+    return total
+
+
 if __name__ == "__main__":
     # print("D1_P1:", day1_p1("day1.txt"))
     # print("D1_P2:", day1_p2("day1.txt"))
     # print("D2_P1:", day2_p1("day2.txt"))
-    print("D2_P2:", day2_p2("day2.txt"))
+    # print("D2_P2:", day2_p2("day2.txt"))
+    print("D3_P1:", day3_p1("day3.txt"))
