@@ -2,28 +2,53 @@
 
 
 def day1_p1(fpath):
-	"""
-	https://adventofcode.com/2025/day/1
-	"""
+    """
+    https://adventofcode.com/2025/day/1
+    """
 
-	with open(fpath, 'r') as f:
-		lines = f.read().splitlines()
+    with open(fpath, "r") as f:
+        lines = f.read().splitlines()
 
-	dial = 50
-	zd = 0
+    dial = 50
+    zd = 0
 
-	for rot in lines:
-		val = int(rot[1:])
+    for rot in lines:
+        val = int(rot[1:])
 
-		if rot[0] == 'L':
-			val *= -1
+        if rot[0] == "L":
+            val *= -1
 
-		dial = (dial + val) % 100
-		if dial == 0:
-			zd += 1
+        dial = (dial + val) % 100
+        if dial == 0:
+            zd += 1
 
-	return zd
+    return zd
 
 
-if __name__ == '__main__':
-	print('D1_P1:', day1_p1('day1.txt'))
+def day1_p2(fpath):
+    """
+    https://adventofcode.com/2025/day/1#part2
+    """
+    with open(fpath, "r") as f:
+        lines = f.read().splitlines()
+
+    dial = 50
+    zd = 0
+
+    for rot in lines:
+        val = int(rot[1:])
+
+        mult = -1 if rot[0] == "L" else 1
+
+        for _ in range(0, val):
+            if dial == 0:
+                zd += 1
+
+            dial = (dial + mult) % 100
+
+    return zd
+
+
+if __name__ == "__main__":
+    print("D1_P1:", day1_p1("day1.txt"))
+    print("D1_P2:", day1_p2("day1.txt"))
