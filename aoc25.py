@@ -49,6 +49,55 @@ def day1_p2(fpath):
     return zd
 
 
+def day2_p1(fpath):
+    """
+    https://adventofcode.com/2025/day/2
+    """
+    with open(fpath, "r") as f:
+        ranges = f.read().strip().split(",")
+
+    sum = 0
+
+    for r in ranges:
+        r = r.split("-")
+        v1 = int(r[0])
+        v2 = int(r[1])
+
+        for v in range(v1, v2 + 1):
+            sv = str(v)
+            for i in range(1, len(sv) // 2 + 1):
+                if sv[:i] * 2 == sv:
+                    sum += v
+
+    return sum
+
+
+def day2_p2(fpath):
+    """
+    https://adventofcode.com/2025/day/2#part2
+    """
+    with open(fpath, "r") as f:
+        ranges = f.read().strip().split(",")
+
+    sum = 0
+
+    for r in ranges:
+        r = r.split("-")
+        v1 = int(r[0])
+        v2 = int(r[1])
+
+        for v in range(v1, v2 + 1):
+            sv = str(v)
+            for i in range(1, len(sv) // 2 + 1):
+                if sv.count(sv[:i]) * i == len(sv):
+                    sum += v
+                    break
+
+    return sum
+
+
 if __name__ == "__main__":
-    print("D1_P1:", day1_p1("day1.txt"))
-    print("D1_P2:", day1_p2("day1.txt"))
+    # print("D1_P1:", day1_p1("day1.txt"))
+    # print("D1_P2:", day1_p2("day1.txt"))
+    # print("D2_P1:", day2_p1("day2.txt"))
+    print("D2_P2:", day2_p2("day2.txt"))
