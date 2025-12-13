@@ -146,7 +146,9 @@ def day3_p2(fpath):
     total = 0
 
     for bank in lines:
-        print(bank)
+        ibank = [(int(e), i) for i, e in enumerate(bank)]
+        sbank = sorted(ibank, key=lambda x: x[0], reverse=True)
+        print(sbank)
 
     return total
 
@@ -332,14 +334,78 @@ def day11_p1(fpath):
     """
     https://adventofcode.com/2025/day/11
     """
-    return None
 
+    with open(fpath, "r") as f:
+        data = f.read().splitlines()
+
+    m = {}
+    for line in data:
+        line = line.split(' ')
+        m[line[0][:-1]] = line[1:]
+
+    ctr = 0
+    stack = ['you']
+    while len(stack) > 0:
+        node = stack.pop()
+        if node == 'out':
+            ctr += 1
+
+        if node in m:
+            stack.extend(m[node])
+
+    return ctr
+
+
+def count_paths(m, beg, end, v, s):
+    # Modified Dijkstra to keep count instead of enumerating all paths
+    # Source/idea: mine49er (reddit)
+
+    if beg == end:
+        return 1
+    if beg in v or beg == 'out': 
+        return 0
+    if beg in s:
+        return s[beg]
+    
+    v.add(beg)
+    
+    out = 0
+    for node in m[beg]:
+        if node not in v:
+            out += count_paths(m, node, end, v, s)
+
+    v.remove(beg)
+    s[beg] = out
+    return out
+
+from functools import reduce
+from operator import mul
 
 def day11_p2(fpath):
     """
     https://adventofcode.com/2025/day/11#part2
     """
-    return None
+    class hd(dict):
+        def __hash__(self):
+            return hash(frozenset(self.items()))
+
+    with open(fpath, "r") as f:
+        data = f.read().splitlines()
+
+    m = {}
+    for line in data:
+        line = line.split(' ')
+        m[line[0][:-1]] = tuple(line[1:])
+
+    # Again brilliant idea by mine49er that can't be left unused:
+
+    # Full path contains segment fft->dac 
+    p1 = [count_paths(hd(m), *p, v=set(), s={}) for p in [('svr','fft'),('fft','dac'),('dac','out')]]
+    # Full path contains segment dac->fft
+    p2 = [count_paths(hd(m), *p, v=set(), s={}) for p in [('svr','dac'),('dac','fft'),('fft','out')]]
+    
+    # Rule of product and then rule of sum for two disjoint sets
+    return reduce(mul, p1) + reduce(mul, p2)
 
 
 def day12_p1(fpath):
@@ -367,7 +433,7 @@ if __name__ == "__main__":
     # print("D4_P2:", day4_p2("day4.txt"))
     # print("D5_P1:", day5_p1("day5.txt"))
     # print("D5_P2:", day5_p2("day5.txt"))
-    print("D6_P1:", day6_p1("day6.txt"))
+    # print("D6_P1:", day6_p1("day6.txt"))
     # print("D6_P2:", day6_p2("day6.txt"))
     # print("D7_P1:", day7_p1("day7.txt"))
     # print("D7_P2:", day7_p2("day7.txt"))
@@ -377,7 +443,7 @@ if __name__ == "__main__":
     # print("D9_P2:", day9_p2("day9.txt"))
     # print("D10_P1:", day10_p1("day10.txt"))
     # print("D10_P2:", day10_p2("day10.txt"))
-    # print("D11_P1:", day11_p1("day11.txt"))
-    # print("D11_P2:", day11_p2("day11.txt"))
+    print("D11_P1:", day11_p1("day11.txt"))
+    print("D11_P2:", day11_p2("day11.txt"))
     # print("D12_P1:", day12_p1("day12.txt"))
     # print("D12_P2:", day12_p2("day12.txt"))
