@@ -1,3 +1,4 @@
+import sympy
 import requests
 import math
 import socket
@@ -38,16 +39,8 @@ def submit_flags(flags: list[str], addr: str, port: int):
         print(f'Error while sending flags: {e}')
 
 @timeout(seconds=6)
-def fermat_factor(n):
-    a = math.isqrt(n)
-    if a*a < n:
-        a += 1
-    while True:
-        b2 = a*a - n
-        b = math.isqrt(b2)
-        if b*b == b2:
-            return (a-b, a+b)
-        a += 1
+def factor(n):
+    return sympy.factorint(n).keys()
 
 def extract_flag(s):
     m = re.search(r'RABA_[A-Za-z0-9+/]{32}', s)
@@ -86,7 +79,7 @@ def run_exploit(client_id):
             msg_hex = challenge['challenge_value']
             msg = int.from_bytes(bytes.fromhex(msg_hex))
 
-            try: p,q = fermat_factor(n)
+            try: p,q = factor(n)
             except TimeoutError: raise Exception('factor timeout')
 
             tot = math.lcm(p-1, q-1)
